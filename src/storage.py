@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from schemas.expense import Expense
+from src.schemas.expense import Expense
 
 EXPENSES_FILE = Path("src/data/expenses.json")
 RATES_FILE = Path("src/data/rates.json")

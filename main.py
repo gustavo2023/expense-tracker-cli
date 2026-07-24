@@ -1,4 +1,5 @@
 import argparse
+from src.commands.add_expense import add_expense
 
 
 def main():
@@ -56,7 +57,10 @@ def main():
         "set-rate", help="Set the exchange currency rate"
     )
     set_rate_parser.add_argument(
-        "rate",
+        "--currency", required=True, type=str, help="Currency of the new rate"
+    )
+    set_rate_parser.add_argument(
+        "--rate",
         required=True,
         type=float,
         help="The new exchange rate (e.g., USD to VES)",
@@ -66,17 +70,18 @@ def main():
 
     match args.command:
         case "add":
-            print(f"Adding expense: {args.description} for {args.amount}")
+            add_expense(args.description, args.amount)
         case "update":
             print(f"Updating expense: {args.id}")
-            if args.date:
-                print(f"Updating date: {args.date}")
-            if args.description:
-                print(f"Updating description: {args.description}")
-            if args.amount:
-                print(f"Updating amount: {args.amount}")
             if not args.date and not args.description and not args.amount:
                 parser.error("You must provide at least one field to update.")
+            else:
+                if args.date:
+                    print(f"Updating date: {args.date}")
+                if args.description:
+                    print(f"Updating description: {args.description}")
+                if args.amount:
+                    print(f"Updating amount: {args.amount}")
         case "delete":
             print(f"Deleting expense: {args.id}")
         case "list":
@@ -87,7 +92,7 @@ def main():
             else:
                 print("Printing summary of expenses")
         case "set-rate":
-            print(f"Setting rate to: {args.rate}")
+            print(f"Setting new currency rate: {args.currency} - {args.rate}")
         case _:
             parser.print_help()
 
