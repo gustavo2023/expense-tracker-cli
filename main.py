@@ -43,6 +43,9 @@ def main():
         type=float,
         help="Update the amount of an expense",
     )
+    update_parser.add_argument(
+        "--category", type=str, help="Update the category of an expense"
+    )
 
     delete_parser = subparsers.add_parser("delete", help="Delete an existing expense")
     delete_parser.add_argument(
@@ -62,6 +65,9 @@ def main():
         type=int,
         help="View summary of total expenses in a month",
     )
+    summary_parser.add_argument(
+        "--category", type=str, help="View summary of total expenses in a category"
+    )
 
     set_rate_parser = subparsers.add_parser(
         "set-rate", help="Set the exchange currency rate"
@@ -73,7 +79,7 @@ def main():
         "--rate",
         required=True,
         type=float,
-        help="The new exchange rate (e.g., USD to VES)",
+        help="The new exchange rate (e.g., USD to EUR)",
     )
     category_parser = subparsers.add_parser("category", help="Add an expense category")
     category_parser.add_argument("category", type=str, help="Expense category to add")
@@ -89,9 +95,15 @@ def main():
 
             valid_categories = load_categories()
             if args.category not in valid_categories:
-                parser.error(
-                    f"Invalid category. Must be one of: {', '.join(valid_categories)}"
+                response = input(
+                    f"Category '{args.category}' does not exist. Do you want to add it? (y/n): "
                 )
+                if response.lower() == "y":
+                    add_category(args.category)
+                else:
+                    parser.error(
+                        f"Invalid category. Must be one of: {', '.join(valid_categories)}"
+                    )
             add_expense(args.description, args.amount, args.category)
         case "update":
             print(f"Updating expense: {args.id}")
@@ -104,6 +116,8 @@ def main():
                     print(f"Updating description: {args.description}")
                 if args.amount:
                     print(f"Updating amount: {args.amount}")
+                if args.category:
+                    print(f"Updating category: {args.category}")
         case "delete":
             if args.id <= 0:
                 parser.error("You must provide a valid positive ID")

@@ -46,7 +46,14 @@ def save_rates(rates_list: dict[str, float]) -> None:
 
 
 def load_categories() -> list[str]:
-    return _load_json(CATEGORIES_FILE, [])
+    categories = _load_json(CATEGORIES_FILE, [])
+
+    if not categories:
+        default_categories = ["Food", "Transportation", "Entertainment", "Others"]
+        save_categories(default_categories)
+        return default_categories
+
+    return categories
 
 
 def save_categories(categories_list: list[str]) -> None:
