@@ -6,6 +6,7 @@ from src.commands.add_category import add_category
 from src.commands.list_expenses import list_expenses
 from src.commands.set_rate import set_rate
 from src.commands.summary import summary
+from src.commands.update_expense import update_expense
 from src.storage import load_categories, load_rates
 
 
@@ -31,9 +32,6 @@ def main():
     update_parser = subparsers.add_parser("update", help="Update an existing expense")
     update_parser.add_argument(
         "--id", required=True, type=int, help="ID of the expense to be edited"
-    )
-    update_parser.add_argument(
-        "--date", type=str, help="Update the date of the expense"
     )
 
     update_parser.add_argument(
@@ -115,18 +113,19 @@ def main():
                     )
             add_expense(args.description, args.amount, args.category)
         case "update":
-            print(f"Updating expense: {args.id}")
-            if not args.date and not args.description and not args.amount:
+            if not args.description and not args.amount and not args.category:
                 parser.error("You must provide at least one field to update.")
-            else:
-                if args.date:
-                    print(f"Updating date: {args.date}")
-                if args.description:
-                    print(f"Updating description: {args.description}")
-                if args.amount:
-                    print(f"Updating amount: {args.amount}")
-                if args.category:
-                    print(f"Updating category: {args.category}")
+            if args.description is not None and not args.description.strip():
+                parser.error("The description cannot be empty")
+            if args.amount is not None and args.amount <= 0:
+                parser.error("The expense amount must be greater than zero")
+            if args.category:
+                valid_categories = load_categories()
+                if args.category not in valid_categories:
+                    parser.error(
+                        f"Invalid category. Must be one of: {', '.join(valid_categories)}"
+                    )
+            update_expense(args.id, args.description, args.amount, args.category)
         case "delete":
             if args.id <= 0:
                 parser.error("You must provide a valid positive ID")
