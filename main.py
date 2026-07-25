@@ -1,5 +1,6 @@
 import sys
 import argparse
+import calendar
 from src.commands.add_expense import add_expense
 from src.commands.delete_expense import delete_expense
 from src.commands.add_category import add_category
@@ -7,7 +8,8 @@ from src.commands.list_expenses import list_expenses
 from src.commands.set_rate import set_rate
 from src.commands.summary import summary
 from src.commands.update_expense import update_expense
-from src.storage import load_categories, load_rates
+from src.commands.set_budget import set_budget
+from src.storage import load_categories, load_rates, load_budgets
 
 
 def main():
@@ -91,6 +93,14 @@ def main():
     category_parser = subparsers.add_parser("category", help="Add an expense category")
     category_parser.add_argument("category", type=str, help="Expense category to add")
 
+    budget_parser = subparsers.add_parser("budget", help="Create a budget for a month")
+    budget_parser.add_argument(
+        "--month", required=True, type=int, help="Month of the budget"
+    )
+    budget_parser.add_argument(
+        "--amount", required=True, type=float, help="Amount of the budget"
+    )
+
     args = parser.parse_args()
 
     match args.command:
@@ -163,6 +173,24 @@ def main():
             if not args.category.strip():
                 parser.error("The category cannot be empty")
             add_category(args.category)
+        case "budget":
+            if not 1 <= args.month <= 12:
+                parser.error("The month must be a valid integer between 1 and 12")
+            if args.amount < 0:
+                parser.error("The budget amount cannont be negative")
+
+            budgets = load_budgets()
+            if str(args.month) in budgets:
+                current_budget = budgets[str(args.month)]
+                month_name = calendar.month_name[args.month]
+                response = input(
+                    f"Budget for {month_name} already exists (Amount: '{current_budget:.2f}'). Update to '{args.amount:.2f}'? (y/n): "
+                )
+
+                if response.lower() not in ["y", "yes"]:
+                    print("Action cancelled")
+                    sys.exit(0)
+            set_budget(args.month, args.amount)
         case _:
             parser.print_help()
 

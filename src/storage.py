@@ -6,6 +6,7 @@ from src.schemas.expense import Expense
 EXPENSES_FILE = Path("src/data/expenses.json")
 RATES_FILE = Path("src/data/rates.json")
 CATEGORIES_FILE = Path("src/data/categories.json")
+BUDGETS_FILE = Path("src/data/budgets.json")
 
 
 def _ensure_directory(file_path: Path) -> None:
@@ -58,3 +59,11 @@ def load_categories() -> list[str]:
 
 def save_categories(categories_list: list[str]) -> None:
     _save_json(CATEGORIES_FILE, categories_list)
+
+
+def load_budgets() -> dict[str, float]:
+    return _load_json(BUDGETS_FILE, {})
+
+
+def save_budgets(budgets_list: dict[str, float]) -> None:
+    _save_json(BUDGETS_FILE, budgets_list)
