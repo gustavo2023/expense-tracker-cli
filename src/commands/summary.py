@@ -1,0 +1,26 @@
+import calendar
+from src.storage import load_expenses, load_rates
+
+
+def summary(month: int | None = None, currency: str | None = None) -> None:
+    expenses_list = load_expenses()
+
+    if month:
+        expenses_list = [
+            expense for expense in expenses_list if int(expense["date"][5:7]) == month
+        ]
+
+    total = sum(expense["amount"] for expense in expenses_list)
+    currency_label = "USD"
+
+    if currency:
+        rates_list = load_rates()
+        rate = rates_list[currency]
+        total *= rate
+        currency_label = currency
+
+    if month:
+        month_name = calendar.month_name[month]
+        print(f"Total expenses for {month_name} ({currency_label}): ${total:.2f}")
+    else:
+        print(f"Total expenses ({currency_label}): ${total:.2f}")

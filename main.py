@@ -5,6 +5,7 @@ from src.commands.delete_expense import delete_expense
 from src.commands.add_category import add_category
 from src.commands.list_expenses import list_expenses
 from src.commands.set_rate import set_rate
+from src.commands.summary import summary
 from src.storage import load_categories, load_rates
 
 
@@ -72,6 +73,9 @@ def main():
     )
     summary_parser.add_argument(
         "--category", type=str, help="View summary of total expenses in a category"
+    )
+    summary_parser.add_argument(
+        "--currency", type=str, help="View summary using a different currency"
     )
 
     set_rate_parser = subparsers.add_parser(
@@ -142,10 +146,7 @@ def main():
                     )
             list_expenses(args.category, args.currency)
         case "summary":
-            if args.month:
-                print(f"Printing summary of expenses for: {args.month}")
-            else:
-                print("Printing summary of expenses")
+            summary(args.month, args.currency)
         case "set-rate":
             rates = load_rates()
 
