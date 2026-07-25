@@ -19,10 +19,11 @@ def add_expense(description: str, amount: float, category: str) -> None:
 
     if str(current_month) in budgets:
         budget_limit = budgets[str(current_month)]
+        target_prefix = f"{today.year}-{current_month:02d}"
         current_total = sum(
             expense["amount"]
             for expense in expenses_list
-            if int(expense["date"][5:7]) == current_month
+            if expense["date"].startswith(target_prefix)
         )
 
         if current_total + amount > budget_limit:
@@ -32,7 +33,7 @@ def add_expense(description: str, amount: float, category: str) -> None:
             print(
                 f"   Current spent: ${current_total:.2f} | New total will be: ${(current_total + amount):.2f}"
             )
-            
+
     expense: Expense = {
         "id": new_id,
         "date": expense_date,

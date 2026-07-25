@@ -1,4 +1,5 @@
 import calendar
+from datetime import date
 from src.storage import load_expenses, load_rates
 
 
@@ -6,8 +7,11 @@ def summary(month: int | None = None, currency: str | None = None) -> None:
     expenses_list = load_expenses()
 
     if month:
+        target_prefix = f"{date.today().year}-{month:02d}"
         expenses_list = [
-            expense for expense in expenses_list if int(expense["date"][5:7]) == month
+            expense
+            for expense in expenses_list
+            if expense["date"].startswith(target_prefix)
         ]
 
     total = sum(expense["amount"] for expense in expenses_list)

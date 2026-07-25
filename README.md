@@ -4,7 +4,7 @@
 
 A robust Command Line Interface (CLI) application built in Python to manage personal finances. This tool allows users to track their daily expenses, view monthly summaries, set budgets, and export data. It also features a custom currency configuration system to seamlessly track expenses in multiple currencies (like USD and VES) without relying on external APIs.
 
-## Requirements
+## Features
 
 The application runs entirely from the command line, utilizing `argparse` for command parsing and `uv` for package management and environment setup.
 
@@ -27,43 +27,62 @@ The application runs entirely from the command line, utilizing `argparse` for co
 ## Expected Commands & Output
 
 ```bash
+# Adding an expense category
+$ expense-tracker category "Food"
+
 # Adding expenses
-$ expense-tracker add --description "Lunch" --amount 20
+$ expense-tracker add --description "Lunch" --amount 20 --category "Food"
 # Expense added successfully (ID: 1)
 
-$ expense-tracker add --description "Dinner" --amount 10
+$ expense-tracker add --description "Dinner" --amount 10 --category "Food"
 # Expense added successfully (ID: 2)
 
 # Viewing expenses
 $ expense-tracker list
-# ID  Date        Description  Amount
-# 1   2024-08-06  Lunch        $20
-# 2   2024-08-06  Dinner       $10
+# ID  Date        Description  Category  Amount
+# 1   2024-08-06  Lunch        Food      $20.00
+# 2   2024-08-06  Dinner       Food      $10.00
 
 # Summaries
 $ expense-tracker summary
-# Total expenses: $30
+# Total expenses: $30.00
 
 $ expense-tracker summary --month 8
-# Total expenses for August: $30
+# Total expenses for August: $30.00
 
 # Deleting expenses
 $ expense-tracker delete --id 2
 # Expense deleted successfully
 
 $ expense-tracker summary
-# Total expenses: $20
+# Total expenses: $20.00
 
 # Setting custom exchange rate (e.g., USD to VES)
-$ expense-tracker set-rate 40.50
+$ expense-tracker set-rate --currency VES --rate 40.50
 # Exchange rate updated successfully.
 ```
 
-## Project Roadmap
+## Installation Guide
 
-1. **The CLI Skeleton:** Set up the Python script using `argparse` to recognize subcommands (`add`, `list`, `delete`, etc.).
-2. **Data Persistence:** Design the JSON data structure and create helper functions to read and write the data file securely.
-3. **Core CRUD Operations:** Connect the CLI commands to the data functions to perform Create, Read, Update, and Delete actions on expenses.
-4. **Logic and Summaries:** Implement filtering by date (e.g., monthly summaries) and calculating totals.
-5. **The Advanced Features:** Introduce category filtering, the monthly budget warning system, and the CSV export functionality.
-6. **The Currency Converter:** Implement the configuration file for the manual exchange rate and integrate currency conversion math into the summaries.
+1. **Clone the repository:**
+
+   ```bash
+   git clone <repository-url>
+   cd expense-tracker
+   ```
+
+2. **Set up the environment:**
+   This project uses `uv` for package management. Ensure `uv` is installed, then sync the environment:
+
+   ```bash
+   uv sync
+   ```
+
+3. **Run the application:**
+   You can run the application using `uv`:
+
+   ```bash
+   uv run python main.py --help
+   ```
+
+   _(Note: The commands in the examples above use `expense-tracker` as an alias for `uv run python main.py`.)_
