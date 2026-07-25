@@ -58,6 +58,9 @@ def main():
     list_parser.add_argument(
         "--category", type=str, help="Filter expenses by a category"
     )
+    list_parser.add_argument(
+        "--currency", type=str, help="List expenses in using a different currency"
+    )
 
     summary_parser = subparsers.add_parser(
         "summary", help="View summary of all expenses"
@@ -100,7 +103,7 @@ def main():
                 response = input(
                     f"Category '{args.category}' does not exist. Do you want to add it? (y/n): "
                 )
-                if response.lower() not in ["y", "yes"]:
+                if response.lower() in ["y", "yes"]:
                     add_category(args.category)
                 else:
                     parser.error(
@@ -131,7 +134,13 @@ def main():
                     parser.error(
                         f"Invalid category. Must be one of: {', '.join(valid_categories)}"
                     )
-            list_expenses(args.category)
+            if args.currency:
+                rates = load_rates()
+                if args.currency not in rates:
+                    parser.error(
+                        f"Currency '{args.currency}' not found. Add it firts using the 'set-rate' command."
+                    )
+            list_expenses(args.category, args.currency)
         case "summary":
             if args.month:
                 print(f"Printing summary of expenses for: {args.month}")
@@ -143,7 +152,7 @@ def main():
             if args.currency in rates:
                 current_rate = rates[args.currency]
                 response = input(
-                    f"Currency {args.currency} already exists (Rate: {current_rate}). Update to {args.rate}? (y/n): "
+                    f"Currency '{args.currency}' already exists (Rate: '{current_rate}'). Update to '{args.rate}'? (y/n): "
                 )
 
                 if response.lower() not in ["y", "yes"]:
