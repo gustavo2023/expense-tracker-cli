@@ -8,6 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+env/
 
-data/
-exports/
+src/data/*.json
+exports/*.csv

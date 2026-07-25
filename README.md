@@ -79,10 +79,14 @@ $ expense-tracker set-rate --currency VES --rate 40.50
    ```
 
 3. **Run the application:**
-   You can run the application using `uv`:
+   To make the `expense-tracker` command available globally in any terminal directory while actively developing, install it in editable mode using `uv tool`:
 
    ```bash
-   uv run python main.py --help
+   uv tool install -e .
    ```
 
-   _(Note: The commands in the examples above use `expense-tracker` as an alias for `uv run python main.py`.)_
+   Now you can use the CLI directly from anywhere:
+
+   ```bash
+   expense-tracker --help
+   ```
