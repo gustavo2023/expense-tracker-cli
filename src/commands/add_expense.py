@@ -3,7 +3,7 @@ from src.schemas.expense import Expense
 from src.storage import load_expenses, save_expenses
 
 
-def add_expense(description: str, amount: float) -> None:
+def add_expense(description: str, amount: float, category: str) -> None:
     expenses_list = load_expenses()
 
     if len(expenses_list) == 0:
@@ -17,6 +17,7 @@ def add_expense(description: str, amount: float) -> None:
         "date": expense_date,
         "description": description,
         "amount": amount,
+        "category": category,
     }
     expenses_list.append(expense)
     save_expenses(expenses_list)

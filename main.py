@@ -1,6 +1,8 @@
 import argparse
 from src.commands.add_expense import add_expense
 from src.commands.delete_expense import delete_expense
+from src.commands.add_category import add_category
+from src.storage import load_categories
 
 
 def main():
@@ -17,6 +19,9 @@ def main():
     )
     add_parser.add_argument(
         "--amount", required=True, type=float, help="Amount of the expense"
+    )
+    add_parser.add_argument(
+        "--category", required=True, type=str, help="Category of the expense"
     )
 
     update_parser = subparsers.add_parser("update", help="Update an existing expense")
@@ -44,6 +49,9 @@ def main():
     )
 
     list_parser = subparsers.add_parser("list", help="View list of all expenses")
+    list_parser.add_argument(
+        "--category", type=str, help="Filter expenses by a category"
+    )
 
     summary_parser = subparsers.add_parser(
         "summary", help="View summary of all expenses"
@@ -66,6 +74,8 @@ def main():
         type=float,
         help="The new exchange rate (e.g., USD to VES)",
     )
+    category_parser = subparsers.add_parser("category", help="Add an expense category")
+    category_parser.add_argument("category", type=str, help="Expense category to add")
 
     args = parser.parse_args()
 
@@ -76,7 +86,13 @@ def main():
             if args.amount <= 0:
                 parser.error("The expense amount must be greater than zero")
 
-            add_expense(args.description, args.amount)
+            valid_categories = load_categories()
+            if args.category not in valid_categories:
+                parser.error(
+                    f"Invalid category. Must be one of: {', '.join(valid_categories)}"
+                )
+
+            add_expense(args.description, args.amount, args.category)
         case "update":
             print(f"Updating expense: {args.id}")
             if not args.date and not args.description and not args.amount:
@@ -101,6 +117,10 @@ def main():
                 print("Printing summary of expenses")
         case "set-rate":
             print(f"Setting new currency rate: {args.currency} - {args.rate}")
+        case "category":
+            if not args.category.strip():
+                parser.error("The category cannot be empty")
+            add_category(args.category)
         case _:
             parser.print_help()
 
