@@ -1,5 +1,6 @@
 import argparse
 from src.commands.add_expense import add_expense
+from src.commands.delete_expense import delete_expense
 
 
 def main():
@@ -70,6 +71,11 @@ def main():
 
     match args.command:
         case "add":
+            if not args.description.strip():
+                parser.error("The description cannot be empty")
+            if args.amount <= 0:
+                parser.error("The expense amount must be greater than zero")
+
             add_expense(args.description, args.amount)
         case "update":
             print(f"Updating expense: {args.id}")
@@ -83,7 +89,9 @@ def main():
                 if args.amount:
                     print(f"Updating amount: {args.amount}")
         case "delete":
-            print(f"Deleting expense: {args.id}")
+            if args.id <= 0:
+                parser.error("You must provide a valid positive ID")
+            delete_expense(args.id)
         case "list":
             print("Printing list of expenses")
         case "summary":
