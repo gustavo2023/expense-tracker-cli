@@ -105,6 +105,9 @@ def main():
     export_parser = subparsers.add_parser(
         "export", help="Export expenses to a CSV file"
     )
+    export_parser.add_argument(
+        "--currency", type=str, help="Export expenses using a different currency"
+    )
 
     args = parser.parse_args()
 
@@ -197,7 +200,13 @@ def main():
                     sys.exit(0)
             set_budget(args.month, args.amount)
         case "export":
-            export_expenses()
+            if args.currency:
+                rates = load_rates()
+                if args.currency not in rates:
+                    parser.error(
+                        f"Currency '{args.currency}' not found. Add it firts using the 'set-rate' command."
+                    )
+            export_expenses(args.currency)
         case _:
             parser.print_help()
 
