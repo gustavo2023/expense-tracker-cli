@@ -2,6 +2,7 @@ import argparse
 from src.commands.add_expense import add_expense
 from src.commands.delete_expense import delete_expense
 from src.commands.add_category import add_category
+from src.commands.list_expenses import list_expenses
 from src.storage import load_categories
 
 
@@ -91,7 +92,6 @@ def main():
                 parser.error(
                     f"Invalid category. Must be one of: {', '.join(valid_categories)}"
                 )
-
             add_expense(args.description, args.amount, args.category)
         case "update":
             print(f"Updating expense: {args.id}")
@@ -109,7 +109,13 @@ def main():
                 parser.error("You must provide a valid positive ID")
             delete_expense(args.id)
         case "list":
-            print("Printing list of expenses")
+            if args.category:
+                valid_categories = load_categories()
+                if args.category not in valid_categories:
+                    parser.error(
+                        f"Invalid category. Must be one of: {', '.join(valid_categories)}"
+                    )
+            list_expenses(args.category)
         case "summary":
             if args.month:
                 print(f"Printing summary of expenses for: {args.month}")
