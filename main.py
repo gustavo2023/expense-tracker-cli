@@ -9,6 +9,7 @@ from src.commands.set_rate import set_rate
 from src.commands.summary import summary
 from src.commands.update_expense import update_expense
 from src.commands.set_budget import set_budget
+from src.commands.export import export_expenses
 from src.storage import load_categories, load_rates, load_budgets
 
 
@@ -101,6 +102,10 @@ def main():
         "--amount", required=True, type=float, help="Amount of the budget"
     )
 
+    export_parser = subparsers.add_parser(
+        "export", help="Export expenses to a CSV file"
+    )
+
     args = parser.parse_args()
 
     match args.command:
@@ -191,6 +196,8 @@ def main():
                     print("Action cancelled")
                     sys.exit(0)
             set_budget(args.month, args.amount)
+        case "export":
+            export_expenses()
         case _:
             parser.print_help()
 
