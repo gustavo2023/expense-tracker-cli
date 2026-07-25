@@ -1,9 +1,11 @@
 import json
 from pathlib import Path
+from typing import Any
 from src.schemas.expense import Expense
 
 EXPENSES_FILE = Path("src/data/expenses.json")
 RATES_FILE = Path("src/data/rates.json")
+CATEGORIES_FILE = Path("src/data/categories.json")
 
 
 def _ensure_directory(file_path: Path) -> None:
@@ -13,37 +15,39 @@ def _ensure_directory(file_path: Path) -> None:
         directory.mkdir(parents=True, exist_ok=True)
 
 
+def _load_json(file_path: Path, default_value: Any) -> Any:
+    _ensure_directory(file_path)
+    if not file_path.is_file():
+        return default_value
+    with open(file_path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def _save_json(file_path: Path, data: Any) -> None:
+    _ensure_directory(file_path)
+    with open(file_path, "w", encoding="utf-8") as file:
+        json.dump(data, file, indent=4)
+
+
 def load_expenses() -> list[Expense]:
-    _ensure_directory(EXPENSES_FILE)
-
-    if not EXPENSES_FILE.is_file():
-        return []
-
-    with open(EXPENSES_FILE, "r", encoding="utf-8") as file:
-        data = json.load(file)
-        return data
+    return _load_json(EXPENSES_FILE, [])
 
 
 def save_expenses(expenses_list: list[Expense]) -> None:
-    _ensure_directory(EXPENSES_FILE)
-
-    with open(EXPENSES_FILE, "w", encoding="utf-8") as file:
-        json.dump(expenses_list, file, indent=4)
+    _save_json(EXPENSES_FILE, expenses_list)
 
 
 def load_rates() -> dict[str, float]:
-    _ensure_directory(RATES_FILE)
-
-    if not RATES_FILE.is_file():
-        return {}
-
-    with open(RATES_FILE, "r", encoding="utf-8") as file:
-        data = json.load(file)
-        return data
+    return _load_json(RATES_FILE, {})
 
 
 def save_rates(rates_list: dict[str, float]) -> None:
-    _ensure_directory(RATES_FILE)
+    _save_json(RATES_FILE, rates_list)
 
-    with open(RATES_FILE, "w", encoding="utf-8") as file:
-        json.dump(rates_list, file, indent=4)
+
+def load_categories() -> list[str]:
+    return _load_json(CATEGORIES_FILE, [])
+
+
+def save_categories(categories_list: list[str]) -> None:
+    _save_json(CATEGORIES_FILE, categories_list)
