@@ -1,9 +1,11 @@
+import sys
 import argparse
 from src.commands.add_expense import add_expense
 from src.commands.delete_expense import delete_expense
 from src.commands.add_category import add_category
 from src.commands.list_expenses import list_expenses
-from src.storage import load_categories
+from src.commands.set_rate import set_rate
+from src.storage import load_categories, load_rates
 
 
 def main():
@@ -98,7 +100,7 @@ def main():
                 response = input(
                     f"Category '{args.category}' does not exist. Do you want to add it? (y/n): "
                 )
-                if response.lower() == "y":
+                if response.lower() not in ["y", "yes"]:
                     add_category(args.category)
                 else:
                     parser.error(
@@ -136,7 +138,18 @@ def main():
             else:
                 print("Printing summary of expenses")
         case "set-rate":
-            print(f"Setting new currency rate: {args.currency} - {args.rate}")
+            rates = load_rates()
+
+            if args.currency in rates:
+                current_rate = rates[args.currency]
+                response = input(
+                    f"Currency {args.currency} already exists (Rate: {current_rate}). Update to {args.rate}? (y/n): "
+                )
+
+                if response.lower() not in ["y", "yes"]:
+                    print("Action cancelled")
+                    sys.exit(0)
+            set_rate(args.currency, args.rate)
         case "category":
             if not args.category.strip():
                 parser.error("The category cannot be empty")
